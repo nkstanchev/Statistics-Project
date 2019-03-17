@@ -1,0 +1,141 @@
+---
+title: "Heart Disease"
+author: "N.Stanchev, T.Georgieva, Ts.Stoilova"
+date: "March 14, 2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+heartDisease = read.csv("heart.csv")
+
+#View(heartDisease)
+
+#Данните се разделят на няколко групи:
+
+#* Категорни данни
+#* Количествени данни
+#* * Дискретни
+#* * Непрекъснати
+
+#* **Age** - Количествена данна, дискретна
+#* **Sex** - Категорна данна
+#* **Cp** - Количествена данна, дискретна
+#* **Trestbps** - Количествена данна, дискретна
+#* **Chol** - Количествена данна, дискретна
+#* **Fbs** - Категорна данна
+#* **Restecg** -
+#* **Thalach** - Количествена данна, дискретна
+#* **Exang** - Категорна данна
+#* **Oldpeak** - Количествена данна, непрекъсната
+#* **Slope** -
+#* **Ca** -
+#* **Thal** -
+#* **Target** - Категорна данна
+
+#colnames(heartDisease)
+#summary(heartDisease)
+#summary(heartDisease$age)
+#summary((heartDisease$sex))
+#summary(heartDisease$cp)
+#summary((heartDisease$trestbps))
+#summary(heartDisease$chol)
+#summary(heartDisease$fbs)
+#summary(heartDisease$restecg)
+#summary(heartDisease$thalach)
+#summary(heartDisease$exang)
+#summary(heartDisease$oldpeak)
+#summary(heartDisease$slope)
+#summary(heartDisease$ca)
+#summary(heartDisease$thal)
+#summary(heartDisease$target)
+
+
+
+```
+### Sex
+```{r}
+head(heartDisease$sex)
+head(factor(heartDisease$sex))
+
+```
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+```{r}
+barplot(table(heartDisease$sex),  names.arg = c("Male", "Female"),
+        col = c("blue", "pink"),
+        main = "Gender breakdown of participants in survey",
+        ylab = "Frequency")
+```
+Вижда се, че броя на жените участници е по-голям от броя на мъжете  .\
+
+Относителни честоти
+```{r}
+table(heartDisease$sex, useNA = "ifany") / length(heartDisease$sex)
+```
+Вижда се, че вероятността случайно избран, човек да е от женски пол е 0.68, а вероятността да е мъж е 0.32.
+
+```{r}
+head(heartDisease$fbs)
+head(factor(heartDisease$fbs))
+
+```
+sdadas
+
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+```{r}
+barplot(table(heartDisease$fbs),  names.arg = c("fasting blood sugar > 120 mg/dl", "fasting blood sugar <= 120 mg/dl"),
+        col = c("navy", "green"),
+        main = "Breakdown of fasting blood sugar",
+        ylab = "Frequency")
+```
+Относителни честоти
+```{r}
+table(heartDisease$fbs, useNA = "ifany") / length(heartDisease$fbs)
+```
+Вижда се, че вероятността случайно избран, човек да е загинал е 0.62, а вероятността да е уживял е 0.38.
+
+### Exercise Induced
+```{r}
+head(heartDisease$exang)
+head(factor(heartDisease$exang))
+
+```
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+```{r}
+barplot(table(heartDisease$exang),  names.arg = c("Exercise induced", "Non-exercise induced"),
+        col = c("blue", "brown"),
+        main = "Breakdown of exercise induced heartattacks",
+        ylab = "Frequency")
+```
+### Age
+```{r}
+head(heartDisease$age)
+summary(heartDisease$age)
+hist(heartDisease$age,
+     include.lowest = TRUE,
+     right = TRUE,
+     main = "Age")
+rug(jitter(heartDisease$age))
+```
+asdassd
+```{r}
+boxplot(heartDisease$age,
+        horizontal = TRUE)
+simple.freqpoly(heartDisease$age)
+```
