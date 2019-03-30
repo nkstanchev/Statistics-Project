@@ -5,137 +5,826 @@ date: "March 14, 2019"
 output: word_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-## R Markdown
+## Данните, които ще ползваме и обработваме, могат да бъдат свалени от [kaggle](https://www.kaggle.com/ronitf/heart-disease-uci) или файла "heart.csv" от проекта.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-## Including Plots
-
-You can also embed plots, for example:
+##Зареждаме и разглеждаме данните:
 
 ```{r}
-heartDisease = read.csv("heart.csv")
+#install.packages(usingR)
+library(lattice)
+library(UsingR)
+heart = read.csv("heart.csv")
+```
 
-#View(heartDisease)
 
+##Описание на данните в колоните:
+
+
+1.   **Age** - възраст в години от 27 до 79;
+
+2.  **Sex** - пол; (мъж/жена), означени с 1/0;
+
+3.  **cp** - вид гръдна болка: типична ангина, атипична ангина, неангинна, асимптомна;
+
+4.  **Trestbps** - кръвно налягане в покой (в mm /Hg, при прием в болница);
+
+5.  **Chol** - серумен холестерол, измерван в mm/d;
+
+6.  **Fbs** - кръвна захар на гладно, измервана в mg/dl;
+
+7.  **Restecg** - ЕКГ;
+
+8.  **Thalach** - max сърдечен ритъм
+
+9.  **Exang** - вазоспастична ангина
+
+10. **Oldpeak** - ST депресия
+
+11. **Slope** - отклонение на ST сегмента при върхово натоварване
+
+12. **Ca** - брой основни кръвоносни съдове
+
+13. **Thal** - резултати от талий стрес тест
+
+14. **Target** - цел  
+  
+  
 #Данните се разделят на няколко групи:
 
-#* Категорни данни
-#* Количествени данни
-#* * Дискретни
-#* * Непрекъснати
-
-#* **Age** - Количествена данна, дискретна
-#* **Sex** - Категорна данна
-#* **Cp** - Количествена данна, дискретна
-#* **Trestbps** - Количествена данна, дискретна
-#* **Chol** - Количествена данна, дискретна
-#* **Fbs** - Категорна данна
-#* **Restecg** -
-#* **Thalach** - Количествена данна, дискретна
-#* **Exang** - Категорна данна
-#* **Oldpeak** - Количествена данна, непрекъсната
-#* **Slope** -
-#* **Ca** -
-#* **Thal** -
-#* **Target** - Категорна данна
-
-#colnames(heartDisease)
-#summary(heartDisease)
-#summary(heartDisease$age)
-#summary((heartDisease$sex))
-#summary(heartDisease$cp)
-#summary((heartDisease$trestbps))
-#summary(heartDisease$chol)
-#summary(heartDisease$fbs)
-#summary(heartDisease$restecg)
-#summary(heartDisease$thalach)
-#summary(heartDisease$exang)
-#summary(heartDisease$oldpeak)
-#summary(heartDisease$slope)
-#summary(heartDisease$ca)
-#summary(heartDisease$thal)
-#summary(heartDisease$target)
+* Категорни данни
+* Количествени данни
+  * Дискретни
+  * Непрекъснати
 
 
+## Определяме от таблицата heart, какъв е типът на колоните:
 
-```
+* **Age** - Количествена данна, дискретна
+* **Sex** - Категорна данна
+* **Cp** - Категорна данна
+* **Trestbps** - Количествена данна, дискретна
+* **Chol** - Количествена данна, непрекъсната
+* **Fbs** - Категорна данна
+* **Restecg** - Категорна данна
+* **Thalach** - Количествена данна, дискретна
+* **Exang** - Категорна данна
+* **Oldpeak** - Количествена данна, непрекъсната
+* **Slope** - Категорна данна
+* **Ca** - Категорна данна
+* **Thal** - Категорна данна
+* **Target** - Категорна данна
+
+
 ### Sex
+
+
 ```{r}
 head(heartDisease$sex)
 head(factor(heartDisease$sex))
-
 ```
+# Имаме 1, ако човекът е от мъжки пол и 0, ако човекът е от женски пол.\
+
 Честотна таблица (Frequency table)\
 Абсолютни честоти
+
 ```{r}
 barplot(table(heartDisease$sex),  names.arg = c("Male", "Female"),
         col = c("blue", "pink"),
         main = "Gender breakdown of participants in survey",
         ylab = "Frequency")
 ```
-Вижда се, че броя на жените участници е по-голям от броя на мъжете  .\
+# Вижда се, че броя на жените участници е по-голям от броя на мъжете  .\
 
 Относителни честоти
+
 ```{r}
 table(heartDisease$sex, useNA = "ifany") / length(heartDisease$sex)
 ```
-Вижда се, че вероятността случайно избран, човек да е от женски пол е 0.68, а вероятността да е мъж е 0.32.
+```{r}
+# Вижда се, че вероятността случайно избран, човек да е от женски пол е 0.68, а вероятността да е мъж е 0.32.
+```
+
+
+
+### Cp
+
+
+```{r}
+head(heartDisease$cp)
+head(factor(heartDisease$cp))
+```
+Имаме 0, ако човекът има типична ангина, 1 - ако ангината при човека е aтипична, 3 - ако човекът няма болки като при ангина и 3, ако ангината е асимптомна.\
+
+
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+
+```{r}
+pie(table(heartDisease$cp),  
+    labels = c("typical angina", "atypical angina", "non-anginal pain", "asymptomatic"),
+    col = c("red", "green", "blue", "yellow"),
+    main = "Chest pain type of participants in survey",
+    ylab = "Frequency")
+```
+
+Вижда се, че най-голям брой от хората са с типична ангина. Най-малко са хората с асимптомна ангина.\
+
+Относителни честоти
+
+```{r}
+table(heartDisease$cp, useNA = "ifany") / length(heartDisease$cp)
+```
+
+Вижда се, че вероятността случайно избран, човек да е с типична ангина е 0.47, вероятността да е с aтипична ангина е 0.16, вероятността за човека да няма болки като при ангина е 0.29, а най-малка е вероятността човек да е с асимптомна ангина.
+
+### Fbs
 
 ```{r}
 head(heartDisease$fbs)
 head(factor(heartDisease$fbs))
-
 ```
-sdadas
+
+Имаме 1, ако човекът има висока кръвна захар и 0, ако няма висока кръвна захар.\
 
 Честотна таблица (Frequency table)\
 Абсолютни честоти
+
 ```{r}
 barplot(table(heartDisease$fbs),  names.arg = c("fasting blood sugar > 120 mg/dl", "fasting blood sugar <= 120 mg/dl"),
         col = c("navy", "green"),
         main = "Breakdown of fasting blood sugar",
         ylab = "Frequency")
 ```
+Вижда се, че хората с висока кръвна захар са много повече от тези, които имат кръвна захар <= 120 mg/dl.\
+
 Относителни честоти
+
 ```{r}
 table(heartDisease$fbs, useNA = "ifany") / length(heartDisease$fbs)
 ```
-Вижда се, че вероятността случайно избран, човек да е загинал е 0.62, а вероятността да е уживял е 0.38.
+Вижда се, че вероятността случайно избран човек да е с висока кръвна захар е 0.85, а вероятността да е с кръвна захар в нормите е 0.15.
+### Restecg
 
-### Exercise Induced
+```{r}
+head(heartDisease$restecg)
+head(factor(heartDisease$restecg))
+```
+Имаме 0, ако човекът има нормални ЕКГ показатели, 1 - ако някои показатели не са добри и 2 - ако показателите не са добри и има сърдечни проблеми.
+
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+
+```{r}
+barplot(table(heartDisease$restecg),  names.arg = c("normal", "abnormality", "hypertrophy"),
+        col = c("navy", "green", "yellow"),
+        main = "Resting electrocardiographic results ",
+        ylab = "Frequency")
+```
+Вижда се, че хората със сърдечни проблеми са най-малко. Хората, от групата с нормални показатели и от групата с няколко показатели извън норма, са с почти еднакви проценти.\
+
+Относителни честоти
+
+```{r}
+table(heartDisease$restecg, useNA = "ifany") / length(heartDisease$restecg)
+```
+Вижда се, че вероятността случайно избран човек да е с нормални показатели е 0.49, да е с няколко показатели извън норма е 0.50, а вероятността да има сърдечни проблеми е 0.01.
+
+### Exang
+
 ```{r}
 head(heartDisease$exang)
 head(factor(heartDisease$exang))
-
 ```
+Имаме 1, ако човекът има вазоспастична ангина и 0 - ако няма вазоспастична ангина.\
+
 Честотна таблица (Frequency table)\
 Абсолютни честоти
+
 ```{r}
-barplot(table(heartDisease$exang),  names.arg = c("Exercise induced", "Non-exercise induced"),
-        col = c("blue", "brown"),
-        main = "Breakdown of exercise induced heartattacks",
+pie(table(heartDisease$exang),  
+    labels = c("true", "false"),
+    col = c("navy", "yellow"),
+    main = "exercise induced angina ",
+    ylab = "Frequency")
+```
+Вижда се, че хората, които имат вазоспастична ангина, са много повече от тези, които нямат.\
+
+Относителни честоти
+
+```{r}
+table(heartDisease$exang, useNA = "ifany") / length(heartDisease$exang)
+```
+Вижда се, че вероятността случайно избран човек да има вазоспастична ангина е 0.67, а да няма вазоспастична ангина е 0.33.
+
+### Slope
+
+
+```{r}
+head(heartDisease$slope)
+head(factor(heartDisease$slope))
+```
+Имаме 0, ако човекът има отклонение на ST сегмента при върхово натоварване над нормата, 1 - ако отклонението е нормата и 2 - ако отклонението е под нормата.\
+
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+
+```{r}
+pie(table(heartDisease$slope),  
+    labels = c("upsloping", "flat", "downsloping"),
+    col = c("blue", "yellow", "green"),
+    main = "The slope of the peak exercise ST segment",
+    ylab = "Frequency")
+```
+Вижда се, че хората с отклонение над нормата са най-малко, а останалите 2 групи са с почти равен брой.\
+
+Относителни честоти
+```{r}
+table(heartDisease$slope, useNA = "ifany") / length(heartDisease$slope)
+```
+Вижда се, че вероятността случайно избран човек да има отклонение на ST сегмента при върхово натоварване над нормата е 0.07, да има отклонение в нормални граници е 0.46 и да има отклонение под нормата е 0.47.
+
+### Ca
+
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+
+```{r}
+barplot(table(heartDisease$ca), 
+        names.arg = c("none", "mild or moderate", "moderate or severe", "akinesis or dyskmem", "4 ne znam kakwo e???????"),
+        col = c("red", "green", "yellow", "blue", "purple"),
+        main = "number of major vessels",
         ylab = "Frequency")
 ```
-### Age
+
+Относителни честоти
+
 ```{r}
-head(heartDisease$age)
+table(heartDisease$ca, useNA = "ifany") / length(heartDisease$ca)
+```
+
+
+### Target
+
+
+```{r}
+head(heartDisease$target)
+head(factor(heartDisease$target))
+```
+Имаме 1, ако човекът има сърдечно заболявание и 0 - ако няма.
+
+Честотна таблица (Frequency table)\
+Абсолютни честоти
+
+```{r}
+pie(table(heartDisease$target),
+      labels = c("false", "true"),
+      col = c("green", "red"),
+      main = "Target",
+      ylab = "Frequency")
+```
+Вижда се, че хората със сърдечни заболявания са малко повече от тези, които нямат.
+
+Относителни честоти
+
+```{r}
+table(heartDisease$target, useNA = "ifany") / length(heartDisease$target)
+```
+Вижда се, че вероятността случайно избран човек да няма сърдечно заболяване е 0.46, а вероятността да има е 0.54.
+
+
+## Да разгледаме количествените дискретни данни
+
+### Age
+
+Вариационния ред
+```{r}
+sort(heartDisease$age)
+```
+
+Минимална стойност на Age
+```{r}
+min(heartDisease$age)
+```
+
+Максимална стойност на Age
+```{r}
+max(heartDisease$age)
+```
+
+Връща минималната и максималната стоност
+```{r}
+range(heartDisease$age)
+```
+
+Средно на Age
+```{r}
+mean(heartDisease$age)
+```
+
+Медиана на Age
+```{r}
+median(heartDisease$age)
+```
+
+Дисперсия на Age
+```{r}
+var(heartDisease$age)
+```
+
+Стандартно отклонение на Age
+```{r}
+sd(heartDisease$age)
+```
+
+Първи квартил
+```{r}
+quantile((heartDisease$age), 0.25)
+```
+
+Трети квартил
+```{r}
+quantile((heartDisease$age), 0.75)
+```
+
+Размах (Range)
+R = max - min
+```{r}
+range(heartDisease$age)[2] - range(heartDisease$age)[1]
+```
+
+Интерквартилен размах (IQR)
+```{r}
+IQR(heartDisease$age)
+```
+
+Изчислява пет статистики Min LowerHinge Median UpperHinge Max NA
+```{r}
+fivenum(heartDisease$age)
+```
+
+Изчилява пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
+```{r}
 summary(heartDisease$age)
+```
+
+Графично представяне
+```{r}
 hist(heartDisease$age,
      include.lowest = TRUE,
      right = TRUE,
      main = "Age")
-rug(jitter(heartDisease$age))
 ```
-asdassd
+
 ```{r}
 boxplot(heartDisease$age,
-        horizontal = TRUE)
-simple.freqpoly(heartDisease$age)
+        horizontal = TRUE,
+        main = "Age")
 ```
+
+
+### Trestbps
+
+
+```{r}
+head(heartDisease$trestbps)
+```
+
+Вариационния ред
+```{r}
+sort(heartDisease$trestbps)
+```
+
+Минимална стойност на Resting blood pressure
+```{r}
+min(heartDisease$trestbps)
+```
+
+Максимална стойност на Resting blood pressure
+```{r}
+max(heartDisease$trestbps)
+```
+
+Връща минималната и максималната стоност
+```{r}
+range(heartDisease$trestbps)
+```
+
+Средно на Resting blood pressure
+```{r}
+mean(heartDisease$trestbps)
+```
+
+Медиана на Resting blood pressure
+```{r}
+median(heartDisease$trestbps)
+```
+
+Дисперсия на Resting blood pressure
+```{r}
+var(heartDisease$trestbps)
+```
+
+Стандартно отклонение на Resting blood pressure
+```{r}
+sd(heartDisease$trestbps)
+```
+
+Първи квартил
+```{r}
+quantile((heartDisease$trestbps), 0.25)
+```
+
+Трети квартил
+```{r}
+quantile((heartDisease$trestbps), 0.75)
+```
+
+Размах (Range)
+R = max - min
+```{r}
+range(heartDisease$trestbps)[2] - range(heartDisease$trestbps)[1]
+```
+
+Интерквартилен размах (IQR)
+```{r}
+IQR(heartDisease$trestbps)
+```
+
+Изчислява пет статистики Min LowerHinge Median UpperHinge Max NA
+```{r}
+fivenum(heartDisease$trestbps)
+```
+
+Изчилява пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
+```{r}
+summary(heartDisease$trestbps)
+```
+
+Графично представяне
+```{r}
+hist(heartDisease$trestbps,
+     include.lowest = TRUE,
+     right = TRUE,
+     main = "Resting blood pressure")
+```
+
+```{r}
+boxplot(heartDisease$trestbps,
+        horizontal = TRUE,
+        main = "Resting blood pressure")
+```
+
+
+### Thalach
+
+
+```{r}
+head(heartDisease$thalach)
+```
+
+Вариационния ред
+```{r}
+sort(heartDisease$thalach)
+```
+
+Минимална стойност на Maximum heart rate achieved 
+```{r}
+min(heartDisease$thalach)
+```
+
+Максимална стойност на Maximum heart rate achieved 
+```{r}
+max(heartDisease$thalach)
+```
+
+Връща минималната и максималната стойност
+```{r}
+range(heartDisease$thalach)
+```
+
+Средно на Maximum heart rate achieved 
+```{r}
+mean(heartDisease$thalach)
+```
+
+Медиана на Maximum heart rate achieved 
+```{r}
+median(heartDisease$thalach)
+```
+
+Дисперсия на Maximum heart rate achieved 
+```{r}
+var(heartDisease$thalach)
+```
+
+Стандартно отклонение на Maximum heart rate achieved 
+```{r}
+sd(heartDisease$thalach)
+```
+
+Първи квартил
+```{r}
+quantile((heartDisease$thalach), 0.25)
+```
+
+Трети квартил
+```{r}
+quantile((heartDisease$thalach), 0.75)
+```
+
+Размах (Range)
+R = max - min
+```{r}
+range(heartDisease$thalach)[2] - range(heartDisease$thalach)[1]
+```
+
+Интерквартилен размах (IQR)
+```{r}
+IQR(heartDisease$thalach)
+```
+
+Изчислява пет статистики Min LowerHinge Median UpperHinge Max NA
+```{r}
+fivenum(heartDisease$thalach)
+```
+
+Изчилява пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
+```{r}
+summary(heartDisease$thalach)
+```
+
+Графично представяне
+```{r}
+hist(heartDisease$thalach,
+     include.lowest = TRUE,
+     right = TRUE,
+     main = "Maximum heart rate achieved ")
+```
+
+```{r}
+boxplot(heartDisease$thalach,
+        horizontal = TRUE,
+        main = "Maximum heart rate achieved ")
+```
+
+
+## Количествените непрекъснати данни
+
+
+### Chol
+
+```{r}
+head(heartDisease$chol)
+```
+
+Вариационият ред
+```{r}
+head(sort(heartDisease$chol),100)
+tail(sort(heartDisease$chol),100)
+```
+
+Минимална стойност на Serum cholestoral
+```{r}
+min(heartDisease$chol)
+```
+
+Максимална стойност на Serum cholestoral
+```{r}
+max(heartDisease$chol)
+```
+
+Средната стойност на Serum cholestoral
+```{r}
+mean(heartDisease$chol)
+```
+
+Медиана на Serum cholestoral
+```{r}
+median(heartDisease$chol)
+```
+
+Дисперсия на Serum cholestoral
+```{r}
+var(heartDisease$chol)
+```
+
+Стандартно отклонение на Serum cholestoral
+```{r}
+sd(heartDisease$chol)
+```
+
+Първи квартил
+```{r}
+quantile((heartDisease$chol), 0.25)
+```
+
+Трети квартил
+```{r}
+quantile((heartDisease$chol), 0.75)
+```
+
+Размах (Range)
+R = max - min..
+```{r}
+range(heartDisease$chol)[2] - range(heartDisease$chol)[1]
+diff(range(heartDisease$chol))
+```
+
+Интерквартилен размах (IQR)
+```{r}
+IQR(heartDisease$chol)
+```
+
+.. Min H_lower Median H_upper Max
+```{r}
+fivenum(heartDisease$chol)
+```
+
+.. Min 1st_Q Median Mean 3rd_Q Max NA
+```{r}
+summary(heartDisease$chol)
+```
+Хистограма
+```{r}
+hist(heartDisease$chol,
+     include.lowest = TRUE,
+     right = TRUE,
+     main = "Ticket price")
+rug(jitter(heartDisease$chol))
+```
+Кутия с мустачки
+```{r}
+boxplot(heartDisease$chol,
+        horizontal = TRUE,
+        main = "Serum cholestoral in mg/dl ")
+```
+
+
+### Oldpeak
+
+
+```{r}
+head(heartDisease$oldpeak)
+```
+
+Вариационият ред
+```{r}
+head(sort(heartDisease$oldpeak),100)
+tail(sort(heartDisease$oldpeak),100)
+```
+
+Минимална стойност на Oldpeak
+```{r}
+min(heartDisease$oldpeak)
+```
+
+Максимална стойност на Oldpeak
+```{r}
+max(heartDisease$oldpeak)
+```
+
+Средната стойност на Oldpeak
+```{r}
+mean(heartDisease$oldpeak)
+```
+
+Медиана на Oldpeak
+```{r}
+median(heartDisease$oldpeak)
+```
+
+Дисперсия на Oldpeak
+```{r}
+var(heartDisease$oldpeak)
+```
+
+Стандартно отклонение на Oldpeak
+```{r}
+sd(heartDisease$oldpeak)
+```
+
+Първи квартил
+```{r}
+quantile((heartDisease$oldpeak), 0.25)
+```
+
+Трети квартил
+```{r}
+quantile((heartDisease$oldpeak), 0.75)
+```
+
+Размах (Range)
+R = max - min..
+```{r}
+range(heartDisease$oldpeak)[2] - range(heartDisease$oldpeak)[1]
+diff(range(heartDisease$oldpeak))
+```
+
+Интерквартилен размах (IQR)
+```{r}
+IQR(heartDisease$oldpeak)
+```
+
+.. Min H_lower Median H_upper Max
+```{r}
+fivenum(heartDisease$oldpeak)
+```
+
+.. Min 1st_Q Median Mean 3rd_Q Max NA
+```{r}
+summary(heartDisease$oldpeak)
+```
+Хистограма
+```{r}
+hist(heartDisease$oldpeak,
+     include.lowest = TRUE,
+     right = TRUE,
+     main = "ST depression induced by exercise relative to rest ")
+```
+Кутия с мустачки
+```{r}
+boxplot(heartDisease$oldpeak,
+        horizontal = TRUE,
+        main = "ST depression induced by exercise relative to rest ")
+```
+
+
+
+
+
+```{r}
+simple.scatterplot(heartDisease$trestbps , heartDisease$chol)
+title("Кръвно налягане в покой (в mm /Hg() / Холестерол (в mm /d)")
+```
+Корелацията междуе кръвно налягане в покой и холестерол е приблизително 0.28
+
+```{r}
+simple.scatterplot(heartDisease$age, heartDisease$trestbps)
+title("Възраст / Кръвно налягане в покой (в mm /Hg()")
+```
+Корелацията между Възраст и кръвно налягане в покой е приблизително 0.28
+```{r}
+cpFactored = factor(heartDisease$cp,labels=c("typical angina","atypical angina", "non-anginal pain", "asymptomatic "))
+densityplot(~heartDisease$oldpeak, 
+            groups=cpFactored,
+            xlab="ST depression induced by exercise relative to rest ",
+            ylab="Density",
+            main="ST depression induced by exercise relative to rest by Chest Paint Type",
+            plot.points=FALSE,
+            auto.key=TRUE,
+            data=heartDisease)
+```
+Вижда се, че при хората с нетипична ангина възможността за по-ниски или нулеви нива на ST депресия при физ.активност спрямо отпочинало състояние е по-висока от тези с други а максималната достигната е малко над 2.
+
+```{r}
+
+bwplot(~heartDisease$age | cpFactored,
+       xlab="ST depression induced by exercise relative to rest ",
+       ylab="Density",
+       main="ST depression induced by exercise relative to rest by Chest Paint Type",
+       data=heartDisease)
+```
+Вижда се, че при асимптоматичната ангина мнозинството от хората са по-възрастни спрямо тези от другите видове.
+```{r}
+restecgFactored = factor(heartDisease$restecg,labels=c("1","2", "3"))
+histogram(~heartDisease$age | restecgFactored,
+         xlab="Age",
+         main="Age breakdown by ECG results",
+         data=heartDisease)
+```
+1 - normal 
+2 - having ST-T wave abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV) 
+3 - showing probable or definite left ventricular hypertrophy by Estes' criteria 
+Вижда се, че при 3-тия вид резултат от ЕКГ изследвания пациентите са строго над 50-годишна възраст, а при другите видове има и по-млади пациенти.
+```{r}
+# regression function
+plot.regression = function(x,y) {
+  panel.xyplot(x,y)
+  panel.abline(lm(y~x))
+}
+sexFactored = factor(heartDisease$sex,labels=c("Female","Male"))
+xyplot(heartDisease$trestbps ~ heartDisease$age | sexFactored,
+       groups = heartDisease$sex,
+       ylab=list(label="Resting blood pressure", fontsize=14),
+       xlab=list(label="Age", fontsize=14),
+       grid=TRUE,
+       panel=plot.regression)
+```
+Забелязва се положителна корелация между кръвно налягане в отпочинало състояние и възраст, по-силно изразена при жените
+```{r}
+xyplot(heartDisease$chol ~ heartDisease$age | sexFactored,
+        xlab=list(label="Age", fontsize=14),
+        ylab=list(label="Cholesterol", fontsize=14),
+        panel=plot.regression)
+       
+```
+Забелязва се положителна корелация между нива на холестерол и възраст като при жените тя е по-голяма при жените.
+```{r}
+xyplot(heartDisease$thalach ~ heartDisease$age | sexFactored,
+        xlab=list(label="Age", fontsize=14),
+        ylab=list(label="Cholesterol", fontsize=14),
+        panel=plot.regression)
+       
+```
+Забелязва се, че има отрицателна корелация между маскимален достигнат пулс и възраст като при мъжете това е по-силно изразено.
