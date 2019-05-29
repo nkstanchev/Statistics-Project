@@ -1,24 +1,29 @@
 ---
 title: "Heart Disease"
 author: "N.Stanchev, T.Georgieva, Ts.Stoilova"
-date: "March 14, 2019"
+date: "May 29, 2019"
 output: word_document
 ---
 
-
-## Данните, които ще ползваме и обработваме, могат да бъдат свалени от [kaggle](https://www.kaggle.com/ronitf/heart-disease-uci) или файла "heart.csv" от проекта.
-
-##Зареждаме и разглеждаме данните:
+Данните, които ще ползваме и обработваме, могат да бъдат свалени от [kaggle](https://www.kaggle.com/ronitf/heart-disease-uci) или файла "heart.csv" от проекта.
 
 ```{r}
-#install.packages(usingR)
+#install.packages("UsingR", dependencies=TRUE)
+#install.packages("StatDA", dependencies=TRUE)
+#install.packages("fitdistrplus", dependencies=TRUE)
+#install.packages("logspline", dependencies=TRUE)
 library(lattice)
 library(UsingR)
+#install.packages("XQuartz",dependencies = TRUE) 
+library(geoR)
+library(StatDA)
+library(fitdistrplus)
+library(logspline)
 heart = read.csv("heart.csv")
 ```
 
 
-##Описание на данните в колоните:
+###Описание на данните в колоните:
 
 
 1.   **Age** - възраст в години от 27 до 79;
@@ -50,7 +55,7 @@ heart = read.csv("heart.csv")
 14. **Target** - цел  
   
   
-#Данните се разделят на няколко групи:
+###Данните се разделят на няколко групи:
 
 * Категорни данни
 * Количествени данни
@@ -58,7 +63,7 @@ heart = read.csv("heart.csv")
   * Непрекъснати
 
 
-## Определяме от таблицата heart, какъв е типът на колоните:
+### Определяме от таблицата heart, какъв е типът на колоните:
 
 * **Age** - Количествена данна, дискретна
 * **Sex** - Категорна данна
@@ -76,6 +81,8 @@ heart = read.csv("heart.csv")
 * **Target** - Категорна данна
 
 
+## Категорните данни
+
 ### Sex
 
 
@@ -83,9 +90,9 @@ heart = read.csv("heart.csv")
 head(heartDisease$sex)
 head(factor(heartDisease$sex))
 ```
-# Имаме 1, ако човекът е от мъжки пол и 0, ако човекът е от женски пол.\
+Имаме 1, ако човекът е от мъжки пол и 0, ако човекът е от женски пол.\
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
 Абсолютни честоти
 
 ```{r}
@@ -94,18 +101,14 @@ barplot(table(heartDisease$sex),  names.arg = c("Male", "Female"),
         main = "Gender breakdown of participants in survey",
         ylab = "Frequency")
 ```
-# Вижда се, че броя на жените участници е по-голям от броя на мъжете  .\
+Вижда се, че броя на жените участници е по-голям от броя на мъжетe
 
 Относителни честоти
 
 ```{r}
 table(heartDisease$sex, useNA = "ifany") / length(heartDisease$sex)
 ```
-```{r}
-# Вижда се, че вероятността случайно избран, човек да е от женски пол е 0.68, а вероятността да е мъж е 0.32.
-```
-
-
+Вижда се, че вероятността случайно избран, човек да е от женски пол е 0.68, а вероятността да е мъж е 0.32.
 
 ### Cp
 
@@ -114,10 +117,11 @@ table(heartDisease$sex, useNA = "ifany") / length(heartDisease$sex)
 head(heartDisease$cp)
 head(factor(heartDisease$cp))
 ```
-Имаме 0, ако човекът има типична ангина, 1 - ако ангината при човека е aтипична, 3 - ако човекът няма болки като при ангина и 3, ако ангината е асимптомна.\
+Имаме 0, ако човекът има типична ангина, 1 - ако ангината при човека е aтипична, 3 - ако човекът няма болки като при ангина и 3, ако ангината е асимптомна.
 
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
+
 Абсолютни честоти
 
 ```{r}
@@ -145,9 +149,10 @@ head(heartDisease$fbs)
 head(factor(heartDisease$fbs))
 ```
 
-Имаме 1, ако човекът има висока кръвна захар и 0, ако няма висока кръвна захар.\
+Имаме 1, ако човекът има висока кръвна захар и 0, ако няма висока кръвна захар.
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
+
 Абсолютни честоти
 
 ```{r}
@@ -164,6 +169,7 @@ barplot(table(heartDisease$fbs),  names.arg = c("fasting blood sugar > 120 mg/dl
 table(heartDisease$fbs, useNA = "ifany") / length(heartDisease$fbs)
 ```
 Вижда се, че вероятността случайно избран човек да е с висока кръвна захар е 0.85, а вероятността да е с кръвна захар в нормите е 0.15.
+
 ### Restecg
 
 ```{r}
@@ -172,7 +178,8 @@ head(factor(heartDisease$restecg))
 ```
 Имаме 0, ако човекът има нормални ЕКГ показатели, 1 - ако някои показатели не са добри и 2 - ако показателите не са добри и има сърдечни проблеми.
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
+
 Абсолютни честоти
 
 ```{r}
@@ -196,9 +203,10 @@ table(heartDisease$restecg, useNA = "ifany") / length(heartDisease$restecg)
 head(heartDisease$exang)
 head(factor(heartDisease$exang))
 ```
-Имаме 1, ако човекът има вазоспастична ангина и 0 - ако няма вазоспастична ангина.\
+Имаме 1, ако човекът има вазоспастична ангина и 0 - ако няма вазоспастична ангина.
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
+
 Абсолютни честоти
 
 ```{r}
@@ -208,7 +216,7 @@ pie(table(heartDisease$exang),
     main = "exercise induced angina ",
     ylab = "Frequency")
 ```
-Вижда се, че хората, които имат вазоспастична ангина, са много повече от тези, които нямат.\
+Вижда се, че хората, които имат вазоспастична ангина, са много повече от тези, които нямат.
 
 Относителни честоти
 
@@ -226,7 +234,8 @@ head(factor(heartDisease$slope))
 ```
 Имаме 0, ако човекът има отклонение на ST сегмента при върхово натоварване над нормата, 1 - ако отклонението е нормата и 2 - ако отклонението е под нормата.\
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
+
 Абсолютни честоти
 
 ```{r}
@@ -246,7 +255,8 @@ table(heartDisease$slope, useNA = "ifany") / length(heartDisease$slope)
 
 ### Ca
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
+
 Абсолютни честоти
 
 ```{r}
@@ -273,7 +283,8 @@ head(factor(heartDisease$target))
 ```
 Имаме 1, ако човекът има сърдечно заболявание и 0 - ако няма.
 
-Честотна таблица (Frequency table)\
+#### Честотна таблица (Frequency table)
+
 Абсолютни честоти
 
 ```{r}
@@ -293,7 +304,7 @@ table(heartDisease$target, useNA = "ifany") / length(heartDisease$target)
 Вижда се, че вероятността случайно избран човек да няма сърдечно заболяване е 0.46, а вероятността да има е 0.54.
 
 
-## Да разгледаме количествените дискретни данни
+## Количествените дискретни данни
 
 ### Age
 
@@ -312,7 +323,7 @@ min(heartDisease$age)
 max(heartDisease$age)
 ```
 
-Връща минималната и максималната стоност
+Mинималната и максималната стоност
 ```{r}
 range(heartDisease$age)
 ```
@@ -358,12 +369,12 @@ range(heartDisease$age)[2] - range(heartDisease$age)[1]
 IQR(heartDisease$age)
 ```
 
-Изчислява пет статистики Min LowerHinge Median UpperHinge Max NA
+Изчисляваме пет статистики Min LowerHinge Median UpperHinge Max NA
 ```{r}
 fivenum(heartDisease$age)
 ```
 
-Изчилява пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
+Изчисляваме пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
 ```{r}
 summary(heartDisease$age)
 ```
@@ -405,7 +416,7 @@ min(heartDisease$trestbps)
 max(heartDisease$trestbps)
 ```
 
-Връща минималната и максималната стоност
+Минималната и максималната стоност
 ```{r}
 range(heartDisease$trestbps)
 ```
@@ -451,12 +462,12 @@ range(heartDisease$trestbps)[2] - range(heartDisease$trestbps)[1]
 IQR(heartDisease$trestbps)
 ```
 
-Изчислява пет статистики Min LowerHinge Median UpperHinge Max NA
+Изчисляваме пет статистики Min LowerHinge Median UpperHinge Max NA
 ```{r}
 fivenum(heartDisease$trestbps)
 ```
 
-Изчилява пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
+Изчисляваме пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
 ```{r}
 summary(heartDisease$trestbps)
 ```
@@ -498,7 +509,7 @@ min(heartDisease$thalach)
 max(heartDisease$thalach)
 ```
 
-Връща минималната и максималната стойност
+Минималната и максималната стойност
 ```{r}
 range(heartDisease$thalach)
 ```
@@ -544,12 +555,12 @@ range(heartDisease$thalach)[2] - range(heartDisease$thalach)[1]
 IQR(heartDisease$thalach)
 ```
 
-Изчислява пет статистики Min LowerHinge Median UpperHinge Max NA
+Изчисляваме пет статистики Min LowerHinge Median UpperHinge Max NA
 ```{r}
 fivenum(heartDisease$thalach)
 ```
 
-Изчилява пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
+Изчисляваме пет статистики Min 1stQuantile Median Mean 3rdQuantile Max
 ```{r}
 summary(heartDisease$thalach)
 ```
@@ -828,3 +839,240 @@ xyplot(heartDisease$thalach ~ heartDisease$age | sexFactored,
        
 ```
 Забелязва се, че има отрицателна корелация между маскимален достигнат пулс и възраст като при мъжете това е по-силно изразено.
+
+## Хипотези
+
+### Age
+
+Проверяваме дали данните за годините са нормално разпределени.
+
+```{r}
+shapiro.test(heartDisease$age)
+qqplot.das(heartDisease$age, "norm")
+
+```
+p-value = 0.005798, а alpha = 0.98637
+От това и графиката следва, че годините не са нормално разпределени.
+Правим wilcox.test и изчисляваме медианата на годините.
+
+```{r}
+
+median(heartDisease$age)
+
+```
+Медианата на годините е 55. Правим следните хипотези:
+
+```{r}
+wilcox.test(heartDisease$age, conf.int = TRUE)
+```
+Тестът на Wilcox показва, че доверителния интервал с 95% ниво на доверие е 53.49995 - 55.50001
+
+H0: mu = 55
+H1: mu > 55
+
+
+```{r}
+
+wilcox.test(heartDisease$age,
+       alternative = "greater",
+       mu = 55,
+       conf.level = 0.95)
+       
+```
+
+p-value = 0.7965  < alpha = 0.98637 # reject HO
+Отхвърляме нулевата хипотеза.
+Алтернативната хипотеза е вярна. (mu > 55)
+
+
+### Trestbps
+
+Проверяваме дали данните за кръвно налягане в покой са нормално разпределени.
+
+```{r}
+shapiro.test(heartDisease$trestbps)
+qqplot.das(heartDisease$trestbps, "norm")
+
+```
+p-value = 1.458e-06 < alpha = 0.96592
+От това и графиката следва, че данните за кръвно налягане в покой не са нормално разпределени. Правим wilcox.test изчисляваме медианата на кръвното налягане.
+
+```{r}
+
+median(heartDisease$trestbps)
+
+```
+
+Медианата на кръвно налягане в покой е 130. Правим следните хипотези:
+```{r}
+wilcox.test(heartDisease$trestbps, conf.int = TRUE)
+```
+Тестът на Wilcox показва, че доверителния интервал с 95% ниво на доверие е 129.0000 - 132.5001
+
+
+H0: mu = 130
+H1: mu != 130
+
+```{r}
+wilcox.test(heartDisease$trestbps,
+       alternative = "two.sided",
+       mu = 130,
+       conf.level = 0.95)
+       
+```
+
+p-value = 0.471 < alpha = 0.96592 # reject HO
+Отхвърляме нулевата хипотеза.
+Алтернативната хипотеза е вярна. (mu != 130)
+
+### Chol
+
+Проверяваме дали данните за серумния холестерол са нормално разпределени.
+
+```{r}
+shapiro.test(heartDisease$chol)
+qqplot.das(heartDisease$chol, "norm")
+
+```
+p-value = 5.365e-09 < alpha = 0.94688
+От това и горната графика следва, че данните за серумния холестерол не са нормално разпределени. Правим wilcox.test изчисляваме медианата на кръвното налягане.
+
+```{r}
+
+median(heartDisease$chol)
+
+```
+
+Медианата на холестерола е 240. Правим следните хипотези:
+
+```{r}
+wilcox.test(heartDisease$chol, conf.int = TRUE)
+```
+Тестът на Wilcox показва, че доверителния интервал с 95% ниво на доверие е 238 - 249
+
+H0: mu = 240
+H1: mu > 240
+
+```{r}
+wilcox.test(heartDisease$chol,
+       alternative = "greater",
+       mu = 240,
+       conf.level = 0.95)
+       
+```
+
+p-value = 0.1082 < alpha = 0.94688 # reject HO
+Отхвърляме нулевата хипотеза.
+Алтернативната хипотеза е вярна. (mu > 240)
+
+
+### Thalach
+
+Проверяваме дали данните за максимален сърдечен ритъм са нормално разпределени.
+
+```{r}
+shapiro.test(heartDisease$thalach)
+qqplot.das(heartDisease$thalach, "norm")
+
+```
+p-value = 6.621e-058 < alpha = 0.97632
+От това и горната графика следва, че данните за максимален сърдечен ритъм  не са нормално разпределени. Правим wilcox.test и изчисляваме медианата на максималния сърдечен ритъм.
+
+```{r}
+
+median(heartDisease$thalach)
+
+```
+Медианата на годините е 153. Правим следните хипотези:
+
+
+```{r}
+wilcox.test(heartDisease$thalach, conf.int = TRUE)
+```
+Тестът на Wilcox показва, че доверителния интервал с 95% ниво на доверие е 148.0 - 153.5
+
+H0: mu = 153
+H1: mu > 153
+
+```{r}
+wilcox.test(heartDisease$thalach,
+       alternative = "greater",
+       mu = 153,
+       conf.level = 0.95)
+       
+```
+
+p-value = 0.9444  < alpha = 0.97632 # reject HO
+Отхвърляме нулевата хипотеза.
+Алтернативната хипотеза е вярна. (mu > 153)
+
+
+
+### Oldpeak
+
+Проверяваме дали данните за ST депресия са нормално разпределени.
+
+```{r}
+shapiro.test(heartDisease$oldpeak)
+qqplot.das(heartDisease$oldpeak, "norm")
+
+```
+p-value = 2.2e-16 < alpha = 0.84418
+От това и горната графика следва, че данните за ST депресия не са нормално разпределени. Правим wilcox.test изчисляваме медианата на ST депресия.
+
+```{r}
+
+median(heartDisease$oldpeak)
+
+```
+
+Медианата на ST депресия е 0.8. Правим следните хипотези:
+
+```{r}
+wilcox.test(heartDisease$oldpeak, conf.int = TRUE)
+```
+Тестът на Wilcox показва, че доверителния интервал с 95% ниво на доверие е 1.299941 - 1.599943
+
+H0: mu = 0.8
+H1: mu != 0.8
+
+```{r}
+wilcox.test(heartDisease$oldpeak,
+       alternative = "two.sided",
+       mu = 0.8,
+       conf.level = 0.95)
+       
+```
+
+p-value = 0.1521 < alpha = 0.84418 # reject HO
+Отхвърляме нулевата хипотеза.
+Алтернативната хипотеза е вярна. (mu != 0.8)
+
+## Хиквадрат хипотези
+
+### Хипотези за независимост
+
+```{r}
+chisq.test(table(heartDisease$sex, heartDisease$cp))
+```
+p-value = 0.07779 > alpha = 0.05. Приемаме нулевата хипотеза, че са независими.
+```{r}
+chisq.test(table(heartDisease$sex, heartDisease$restecg))
+```
+p-value = 0.1574 > alpha = 0.05. Приемаме нулевата хипотеза, че са независими.
+```{r}
+chisq.test(table(heartDisease$sex, heartDisease$fbs))
+```
+p-value = 0.5417 > alpha = 0.05. Приемаме нулевата хипотеза, че са независими.
+```{r}
+chisq.test(table(heartDisease$sex, heartDisease$thal))
+```
+p-value = 1.111e-09 < alpha = 0.05. Отхвърляме нулевата хипотеза, че са независими.
+```{r}
+chisq.test(table(heartDisease$fbs, heartDisease$ca))
+```
+p-value = 0.1182 > alpha = 0.05. Приемаме нулевата хипотеза, че са независими.
+```{r}
+chisq.test(table(heartDisease$fbs, heartDisease$restecg))
+```
+p-value = 0.3171 > alpha = 0.05. Приемаме нулевата хипотеза, че са независими.
